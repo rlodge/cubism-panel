@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['app/plugins/sdk', 'lodash', 'app/core/utils/kbn', 'app/core/time_series', './rendering'], function (_export, _context) {
+System.register(['app/plugins/sdk', 'lodash', 'app/core/utils/kbn', './rendering'], function (_export, _context) {
   "use strict";
 
-  var MetricsPanelCtrl, _, kbn, TimeSeries, rendering, _createClass, CubismChartCtrl;
+  var MetricsPanelCtrl, _, kbn, rendering, _createClass, CubismChartCtrl;
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -42,8 +42,6 @@ System.register(['app/plugins/sdk', 'lodash', 'app/core/utils/kbn', 'app/core/ti
       _ = _lodash.default;
     }, function (_appCoreUtilsKbn) {
       kbn = _appCoreUtilsKbn.default;
-    }, function (_appCoreTime_series) {
-      TimeSeries = _appCoreTime_series.default;
     }, function (_rendering) {
       rendering = _rendering.default;
     }],
@@ -75,11 +73,11 @@ System.register(['app/plugins/sdk', 'lodash', 'app/core/utils/kbn', 'app/core/ti
           var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CubismChartCtrl).call(this, $scope, $injector));
 
           _this.$rootScope = $rootScope;
+          _this.data = [];
 
           var panelDefaults = {
             links: [],
             datasource: null,
-            maxDataPoints: 3,
             interval: null,
             targets: [{}],
             cacheTimeout: null,
@@ -93,7 +91,6 @@ System.register(['app/plugins/sdk', 'lodash', 'app/core/utils/kbn', 'app/core/ti
           _.defaults(_this.panel, panelDefaults);
           _.defaults(_this.panel.legend, panelDefaults.legend);
 
-          _this.events.on('render', _this.onRender.bind(_this));
           _this.events.on('data-received', _this.onDataReceived.bind(_this));
           _this.events.on('data-error', _this.onDataError.bind(_this));
           _this.events.on('data-snapshot-load', _this.onDataReceived.bind(_this));
@@ -116,7 +113,7 @@ System.register(['app/plugins/sdk', 'lodash', 'app/core/utils/kbn', 'app/core/ti
         }, {
           key: 'onDataError',
           value: function onDataError() {
-            this.series = [];
+            this.data = [];
             this.render();
           }
         }, {
@@ -127,92 +124,10 @@ System.register(['app/plugins/sdk', 'lodash', 'app/core/utils/kbn', 'app/core/ti
             this.render();
           }
         }, {
-          key: 'onRender',
-          value: function onRender() {
-            this.data = this.parseSeries(this.series);
-          }
-        }, {
-          key: 'parseSeries',
-          value: function parseSeries(series) {
-            var _this2 = this;
-
-            return _.map(this.series, function (serie, i) {
-              return {
-                label: serie.alias,
-                data: serie.stats[_this2.panel.valueName],
-                color: _this2.panel.aliasColors[serie.alias] || _this2.$rootScope.colors[i]
-              };
-            });
-          }
-        }, {
           key: 'onDataReceived',
           value: function onDataReceived(dataList) {
-            this.series = dataList.map(this.seriesHandler.bind(this));
-            this.data = this.parseSeries(this.series);
+            this.data = dataList;
             this.render(this.data);
-          }
-        }, {
-          key: 'seriesHandler',
-          value: function seriesHandler(seriesData) {
-            var series = new TimeSeries({
-              datapoints: seriesData.datapoints,
-              alias: seriesData.target
-            });
-
-            series.flotpairs = series.getFlotPairs(this.panel.nullPointMode);
-            return series;
-          }
-        }, {
-          key: 'getDecimalsForValue',
-          value: function getDecimalsForValue(value) {
-            if (_.isNumber(this.panel.decimals)) {
-              return { decimals: this.panel.decimals, scaledDecimals: null };
-            }
-
-            var delta = value / 2;
-            var dec = -Math.floor(Math.log(delta) / Math.LN10);
-
-            var magn = Math.pow(10, -dec);
-            var norm = delta / magn; // norm is between 1.0 and 10.0
-            var size;
-
-            if (norm < 1.5) {
-              size = 1;
-            } else if (norm < 3) {
-              size = 2;
-              // special case for 2.5, requires an extra decimal
-              if (norm > 2.25) {
-                size = 2.5;
-                ++dec;
-              }
-            } else if (norm < 7.5) {
-              size = 5;
-            } else {
-              size = 10;
-            }
-
-            size *= magn;
-
-            // reduce starting decimals if not needed
-            if (Math.floor(value) === value) {
-              dec = 0;
-            }
-
-            var result = {};
-            result.decimals = Math.max(0, dec);
-            result.scaledDecimals = result.decimals - Math.floor(Math.log(size) / Math.LN10) + 2;
-
-            return result;
-          }
-        }, {
-          key: 'formatValue',
-          value: function formatValue(value) {
-            var decimalInfo = this.getDecimalsForValue(value);
-            var formatFunc = kbn.valueFormats[this.panel.format];
-            if (formatFunc) {
-              return formatFunc(value, decimalInfo.decimals, decimalInfo.scaledDecimals);
-            }
-            return value;
           }
         }, {
           key: 'link',
