@@ -72,9 +72,15 @@ export default function link(scope, elem, attrs, ctrl) {
         .each(function(d) {
           var scale = d3.time.hour;
           var count = 6;
-          if (span < 6 * anHour) {
+          if (span < 2 * anHour) {
             var scale = d3.time.minute;
             var count = 15;
+          } else if (span < 12 * anHour) {
+            var scale = d3.time.hour;
+            var count = 1;
+          } else if (span < aDay) {
+            var scale = d3.time.hour;
+            var count = 3;
           } else if (span < 2 * aDay) {
             var scale = d3.time.hour;
             var count = 6;

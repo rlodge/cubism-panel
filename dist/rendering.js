@@ -7,6 +7,11 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie', './cubism
 
   function link(scope, elem, attrs, ctrl) {
     var data, panel, context;
+    var anHour = 60 * 60 * 1000;
+    var aDay = 24 * anHour;
+    var aWeek = 7 * aDay;
+    var aMonth = 4 * aWeek;
+
     var cubismContainer = elem.find('.cubism-panel').get(0);
 
     ctrl.events.on('render', function () {
@@ -23,6 +28,7 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie', './cubism
       var earliest = firstSeries[0][1];
       var latest = firstSeries[firstSeries.length - 1][1];
       var seriesLength = firstSeries.length;
+      var span = latest - earliest;
       var size = Math.floor(d3.select(cubismContainer).node().getBoundingClientRect().width);
       var step = Math.floor((latest - earliest) / size);
       var seriesStep = Math.floor((latest - earliest) / (seriesLength - 1));
@@ -51,7 +57,28 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie', './cubism
         d3.select(cubismContainer).selectAll(".axis").data(["top", "bottom"]).enter().append("div").attr("class", function (d) {
           return d + " axis";
         }).each(function (d) {
-          d3.select(this).call(context.axis().ticks(12).orient(d));
+          var scale = d3.time.hour;
+          var count = 6;
+          if (span < 2 * anHour) {
+            var scale = d3.time.minute;
+            var count = 15;
+          } else if (span < 12 * anHour) {
+            var scale = d3.time.hour;
+            var count = 1;
+          } else if (span < aDay) {
+            var scale = d3.time.hour;
+            var count = 3;
+          } else if (span < 2 * aDay) {
+            var scale = d3.time.hour;
+            var count = 6;
+          } else if (span < 2 * aWeek) {
+            var scale = d3.time.day;
+            var count = 1;
+          } else if (span < 2 * aMonth) {
+            var scale = d3.time.day;
+            var count = 2;
+          }
+          d3.select(this).call(context.axis().ticks(scale, count).orient(d));
         });
 
         d3.select(cubismContainer).append("div").attr("class", "rule").call(context.rule());
