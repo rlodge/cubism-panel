@@ -6,6 +6,11 @@ import cubism from './cubism/index';
 
 export default function link(scope, elem, attrs, ctrl) {
   var data, panel, context;
+  const anHour = 60 * 60 * 1000;
+  const aDay = 24 * anHour;
+  const aWeek = 7 * aDay;
+  const aMonth = 4 * aWeek;
+
   var cubismContainer = elem.find('.cubism-panel').get(0);
 
   ctrl.events.on('render', function() {
@@ -22,6 +27,7 @@ export default function link(scope, elem, attrs, ctrl) {
     var earliest = firstSeries[0][1];
     var latest = firstSeries[firstSeries.length - 1][1];
     var seriesLength = firstSeries.length;
+    var span = latest - earliest;
     var size = Math.floor(d3.select(cubismContainer)
       .node()
       .getBoundingClientRect()
@@ -64,8 +70,23 @@ export default function link(scope, elem, attrs, ctrl) {
           return d + " axis"
         })
         .each(function(d) {
+          var scale = d3.time.hour;
+          var count = 6;
+          if (span < 6 * anHour) {
+            var scale = d3.time.minute;
+            var count = 15;
+          } else if (span < 2 * aDay) {
+            var scale = d3.time.hour;
+            var count = 6;
+          } else if (span < 2 * aWeek) {
+            var scale = d3.time.day;
+            var count = 1;
+          } else if (span < 2 * aMonth) {
+            var scale = d3.time.day;
+            var count = 2;
+          }
           d3.select(this)
-            .call(context.axis().ticks(12).orient(d))
+            .call(context.axis().ticks(scale, count).orient(d))
         });
 
       d3.select(cubismContainer)
