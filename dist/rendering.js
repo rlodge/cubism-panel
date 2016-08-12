@@ -1,17 +1,70 @@
 'use strict';
 
-System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie'], function (_export, _context) {
-  var _, $;
+System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie', './cubism/index'], function (_export, _context) {
+  "use strict";
+
+  var _, $, cubism;
 
   function link(scope, elem, attrs, ctrl) {
-    var data, panel;
-    elem = elem.find('.piechart-panel');
-    var $tooltip = $('<div id="tooltip">');
+    var data, panel, context;
+    var cubismContainer = elem.find('.cubism-panel').get(0);
 
     ctrl.events.on('render', function () {
       render();
       ctrl.renderingCompleted();
     });
+
+    function render() {
+      if (!ctrl.data) {
+        return;
+      }
+
+      cubismContainer.innerHTML = "";
+      context = cubism.context()
+      //.serverDelay(scope.cubismServerDelay)
+      .step(1000).size(Math.floor(d3.select(cubismContainer).node().getBoundingClientRect().width)).stop();
+
+      data = ctrl.data;
+      panel = ctrl.panel;
+
+      if (setElementHeight()) {
+        var random = function random(x) {
+          var value = 0,
+              values = [],
+              i = 0,
+              last;
+          return context.metric(function (start, stop, step, callback) {
+            start = +start, stop = +stop;
+            last = isNaN(last) ? start : last;
+            while (last < stop) {
+              last += step;
+              value = Math.max(-10, Math.min(10, value + .8 * Math.random() - .4 + .2 * Math.cos(i += x * .02)));
+              values.push(value);
+              values = values.slice((start - stop) / stop);
+            }
+            callback(null, values);
+          }, x);
+        };
+
+        d3.select(cubismContainer).selectAll(".axis").data(["top", "bottom"]).enter().append("div").attr("class", function (d) {
+          return d + " axis";
+        }).each(function (d) {
+          d3.select(this).call(context.axis().ticks(12).orient(d));
+        });
+
+        d3.select(cubismContainer).append("div").attr("class", "rule").call(context.rule());
+
+        //this is where the metrics are created
+        var Data = d3.range(1, 6).map(random);
+        // var primary = Data[4];
+        // var secondary = primary.shift(-30 * 60 * 1000); //why is this metric identical to the primary metric?
+        // Data[5] = secondary;
+
+        console.log(Data);
+
+        d3.select(cubismContainer).selectAll(".horizon").data(Data).enter().insert("div", ".bottom").attr("class", "horizon").call(context.horizon().extent([-10, 10]));
+      }
+    }
 
     function setElementHeight() {
       try {
@@ -23,101 +76,18 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie'], function
         height -= 5; // padding
         height -= panel.title ? 24 : 9; // subtract panel title bar
 
-        elem.css('height', height + 'px');
+        cubismContainer.style.height = height + 'px';
 
         return true;
       } catch (e) {
         // IE throws errors sometimes
+        console.log(e);
         return false;
       }
     }
 
     function formatter(label, slice) {
       return "<div style='font-size:" + ctrl.panel.fontSize + ";text-align:center;padding:2px;color:" + slice.color + ";'>" + label + "<br/>" + Math.round(slice.percent) + "%</div>";
-    }
-
-    function addPieChart() {
-      var width = elem.width();
-      var height = elem.height();
-
-      var size = Math.min(width, height);
-
-      var plotCanvas = $('<div></div>');
-      var plotCss = {
-        top: '10px',
-        margin: 'auto',
-        position: 'relative',
-        height: size - 20 + 'px'
-      };
-
-      plotCanvas.css(plotCss);
-
-      var $panelContainer = elem.parents('.panel-container');
-      var backgroundColor = $panelContainer.css('background-color');
-
-      var options = {
-        legend: {
-          show: false
-        },
-        series: {
-          pie: {
-            show: true,
-            stroke: {
-              color: backgroundColor,
-              width: parseFloat(ctrl.panel.strokeWidth).toFixed(1)
-            },
-            label: {
-              show: ctrl.panel.legend.show && ctrl.panel.legendType === 'On graph',
-              formatter: formatter
-            },
-            highlight: {
-              opacity: 0.0
-            }
-          }
-        },
-        grid: {
-          hoverable: true,
-          clickable: false
-        }
-      };
-
-      if (panel.pieType === 'donut') {
-        options.series.pie.innerRadius = 0.5;
-      }
-
-      elem.html(plotCanvas);
-
-      $.plot(plotCanvas, ctrl.data, options);
-      plotCanvas.bind("plothover", function (event, pos, item) {
-        if (!item) {
-          $tooltip.detach();
-          return;
-        }
-
-        var body;
-        var percent = parseFloat(item.series.percent).toFixed(2);
-        var formatted = ctrl.formatValue(item.series.data[0][1]);
-
-        body = '<div class="graph-tooltip-small"><div class="graph-tooltip-time">';
-        body += '<div class="graph-tooltip-value">' + item.series.label + ': ' + formatted;
-        body += " (" + percent + "%)" + '</div>';
-        body += "</div></div>";
-
-        $tooltip.html(body).place_tt(pos.pageX + 20, pos.pageY);
-      });
-    }
-
-    function render() {
-      if (!ctrl.data) {
-        return;
-      }
-
-      data = ctrl.data;
-      panel = ctrl.panel;
-
-      if (setElementHeight()) {
-        addPieChart();
-      }
     }
   }
 
@@ -128,7 +98,9 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie'], function
       _ = _lodash.default;
     }, function (_jquery) {
       $ = _jquery.default;
-    }, function (_jqueryFlot) {}, function (_jqueryFlotPie) {}],
+    }, function (_jqueryFlot) {}, function (_jqueryFlotPie) {}, function (_cubismIndex) {
+      cubism = _cubismIndex.default;
+    }],
     execute: function () {}
   };
 });

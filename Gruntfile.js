@@ -22,6 +22,18 @@ module.exports = function(grunt) {
         src: ['img/*'],
         dest: 'dist/src/'
       },
+      dep_to_dist: {
+        cwd: 'node_modules',
+        expand: true,
+        src: ['d3/*','cubism/*'],
+        dest: 'dist/'
+      },
+      cubism_overlay: {
+        cwd: 'overlays/cubism',
+        expand: true,
+        src: ['*'],
+        dest: 'dist/cubism'
+      },
       pluginDef: {
         expand: true,
         src: [ 'plugin.json', 'README.md' ],
@@ -53,8 +65,19 @@ module.exports = function(grunt) {
         }]
       },
     },
+    sass: {
+      options: {
+        sourceMap: true
+      },
+      dist: {
+        files: {
+          "dist/css/cubism_dark.css": "src/sass/cubism_dark.scss",
+          "dist/css/cubism_dark.css": "src/sass/cubism_dark.scss",
+        }
+      }
+    }
 
   });
 
-  grunt.registerTask('default', ['clean', 'copy:src_to_dist', 'copy:img_to_dist', 'copy:pluginDef', 'babel']);
+  grunt.registerTask('default', ['clean', 'sass', 'copy:src_to_dist', 'copy:img_to_dist', 'copy:dep_to_dist', 'copy:cubism_overlay', 'copy:pluginDef', 'babel']);
 };

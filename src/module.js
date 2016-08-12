@@ -1,7 +1,12 @@
 import _ from 'lodash';
-import {PieChartCtrl} from './piechart_ctrl';
+import {CubismChartCtrl} from './cubism_ctrl';
+import {loadPluginCss} from 'app/plugins/sdk';
+
+loadPluginCss({
+  dark: 'plugins/grafana-cubism-panel/css/cubism_dark.css',
+  light: 'plugins/grafana-cubism-panel/css/cubism_light.css'
+});
 
 export {
-  PieChartCtrl as PanelCtrl
+  CubismChartCtrl as PanelCtrl
 };
-

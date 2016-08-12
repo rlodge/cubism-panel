@@ -1,0 +1,79 @@
+/*-----------------------------------------------------------------------------
+AXIS
+-----------------------------------------------------------------------------*/
+.axis path, .axis line {
+  fill: none;
+  stroke: #D8D9DA;
+  shape-rendering: crispEdges; }
+
+.axis {
+  font: 10px sans-serif; }
+
+.axis text {
+  -webkit-transition: fill-opacity 250ms linear;
+  color: #D8D9DA;
+  fill: currentColor; }
+
+.axis path {
+  display: none; }
+
+.axis line {
+  stroke: #D8D9DA;
+  shape-rendering: crispEdges; }
+
+/*-----------------------------------------------------------------------------
+HORIZON
+-----------------------------------------------------------------------------*/
+.horizon {
+  border-bottom: solid 1px #D8D9DA;
+  overflow: hidden;
+  position: relative; }
+
+.horizon {
+  border-top: solid 1px #D8D9DA;
+  border-bottom: solid 1px #D8D9DA; }
+
+.horizon + .horizon {
+  border-top: none; }
+
+.horizon canvas {
+  display: block; }
+
+.horizon .title,
+.horizon .value {
+  bottom: 0;
+  color: #D8D9DA;
+  line-height: 30px;
+  margin: 0 6px;
+  position: absolute;
+  text-shadow: -1px -1px 0 #1f1d1d, 1px -1px 0 #1f1d1d, -1px 1px 0 #1f1d1d, 1px 1px 0 #1f1d1d;
+  white-space: nowrap; }
+
+.horizon .title {
+  left: 0; }
+
+.horizon .value {
+  right: 0; }
+
+/*-----------------------------------------------------------------------------
+Marker
+-----------------------------------------------------------------------------*/
+.line {
+  background: #D8D9DA;
+  z-index: 2; }
+
+/*-----------------------------------------------------------------------------
+DIVS
+-----------------------------------------------------------------------------*/
+.cubism-wrapper {
+  width: 100%; }
+
+.cubism-canvas-wrapper {
+  width: 100%; }
+
+.cubism-panel {
+  position: relative;
+  padding: 0;
+  width: 100%; }
+
+/*# sourceMappingURL=cubism_dark.css.map */

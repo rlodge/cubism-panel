@@ -1,0 +1,80 @@
+{
+  "_args": [
+    [
+      "cubism@^1.6.0",
+      "/Users/rlodge/code/misc/grafana-dev/src/github.com/grafana/grafana/data/plugins/cubism-panel"
+    ]
+  ],
+  "_from": "cubism@>=1.6.0 <2.0.0",
+  "_id": "cubism@1.6.0",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/cubism",
+  "_npmUser": {
+    "email": "tom@tom-carden.co.uk",
+    "name": "randometc"
+  },
+  "_npmVersion": "1.3.11",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "cubism",
+    "raw": "cubism@^1.6.0",
+    "rawSpec": "^1.6.0",
+    "scope": null,
+    "spec": ">=1.6.0 <2.0.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cubism/-/cubism-1.6.0.tgz",
+  "_shasum": "a566e10594ac59abfc73b829bdee32d91a2f0350",
+  "_shrinkwrap": null,
+  "_spec": "cubism@^1.6.0",
+  "_where": "/Users/rlodge/code/misc/grafana-dev/src/github.com/grafana/grafana/data/plugins/cubism-panel",
+  "author": {
+    "name": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike"
+  },
+  "bugs": {
+    "url": "https://github.com/square/cubism/issues"
+  },
+  "dependencies": {
+    "d3": "3.x"
+  },
+  "description": "A JavaScript library for time series visualization.",
+  "devDependencies": {
+    "uglify-js": "1.2.5",
+    "vows": "0.6.1"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "a566e10594ac59abfc73b829bdee32d91a2f0350",
+    "tarball": "https://registry.npmjs.org/cubism/-/cubism-1.6.0.tgz"
+  },
+  "homepage": "http://square.github.com/cubism/",
+  "keywords": [
+    "d3",
+    "time series",
+    "visualization"
+  ],
+  "main": "./index.js",
+  "maintainers": [
+    {
+      "name": "mbostock",
+      "email": "mbostock@gmail.com"
+    },
+    {
+      "name": "randometc",
+      "email": "tom@tom-carden.co.uk"
+    }
+  ],
+  "name": "cubism",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/square/cubism.git"
+  },
+  "version": "1.6.0"
+}
