@@ -25,7 +25,7 @@ module.exports = function(grunt) {
       dep_to_dist: {
         cwd: 'node_modules',
         expand: true,
-        src: ['d3/*','cubism/*'],
+        src: ['d3/*','cubism/*', 'tinycolor2/*'],
         dest: 'dist/'
       },
       cubism_overlay: {

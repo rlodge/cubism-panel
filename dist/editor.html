@@ -1,47 +1,114 @@
 <div class="editor-row">
-	<div class="section gf-form-group">
-		<h5 class="section-heading">General</h5>
-		<div class="gf-form">
-			<span class="gf-form-label width-8">Type</span>
-			<div class="gf-form-select-wrapper max-width-10">
-				<select class="gf-form-input" ng-model="ctrl.panel.pieType" ng-options="t for t in ['pie', 'donut']" ng-change="ctrl.render()"></select>
-			</div>
-		</div>
-		<div class="gf-form">
-			<span class="gf-form-label width-8">Unit</span>
-			<div class="gf-form-dropdown-typeahead width-10"
-				 ng-model="ctrl.panel.format"
-				 dropdown-typeahead="ctrl.unitFormats"
-				 dropdown-typeahead-on-select="ctrl.setUnitFormat($subItem)">
-			</div>
-		</div>
-		<div class="gf-form">
-			<span class="gf-form-label width-8">Value</span>
-			<div class="gf-form-select-wrapper max-width-10">
-				<select class="gf-form-input" ng-model="ctrl.panel.valueName" ng-options="v for v in ['min','max','avg', 'current', 'total']" ng-change="ctrl.render()"></select>
-			</div>
-		</div>
-		<div class="gf-form">
-			<span class="gf-form-label width-8">Divider width</span>
-			<input type="text" class="gf-form-input max-width-10" ng-model="ctrl.panel.strokeWidth" ng-change="ctrl.render()">
-		</div>
-	</div>
+  <div class="section gf-form-group">
+    <h5>Series specific overrides <tip>Regex match example: /server[0-3]/i </tip></h5>
+    <div class="tight-form-container">
+      <div class="tight-form" ng-repeat="override in ctrl.panel.seriesOverides">
+        <ul class="tight-form-list">
+          <li class="tight-form-item">
+            <i class="fa fa-remove pointer" ng-click="ctrl.removeSeriesOverride($index)"></i>
+          </li>
 
-	<div class="section gf-form-group">
-		<h5 class="section-heading">Legend</h5>
-		<gf-form-switch class="gf-form" label="Show Legend" label-class="width-8" checked="ctrl.panel.legend.show" on-change="ctrl.refresh()"></gf-form-switch>
-		<div class="gf-form">
-			<span class="gf-form-label width-8">Position</span>
-			<div class="gf-form-select-wrapper">
-				<select class="gf-form-input" ng-model="ctrl.panel.legendType" ng-options="t for t in ['On graph', 'Under graph', 'Right side']" ng-change="ctrl.render()"></select>
-			</div>
-		</div>
-		<div class="gf-form" ng-if="ctrl.panel.legendType === 'On graph'">
-			<span class="gf-form-label width-8">Font size</span>
-			<div class="gf-form-select-wrapper">
-				<select class="gf-form-input" ng-model="ctrl.panel.fontSize" ng-options="s for s in ['50%', '60%', '70%', '80%', '100%', '110%', '120%', '150%', '175%']" ng-change="ctrl.render()"></select>
-			</div>
-		</div>
-		<gf-form-switch class="gf-form" label="Legend Values" label-class="width-8" checked="ctrl.panel.legend.values" on-change="ctrl.refresh()"></gf-form-switch>
-	</div>
+          <li class="tight-form-item">
+            alias or regex
+          </li>
+          <li>
+            <input type="text" ng-model="override.alias" bs-typeahead="ctrl.getSeriesNames(ctrl)" data-min-length=0 data-items=100 ng-blur="ctrl.render()" class="input-medium tight-form-input" >
+          </li>
+
+          <li class="tight-form-item">
+            summary type
+          </li>
+          <li>
+            <select
+              ng-model="override.summaryType"
+              required="required"
+              ng-change="ctrl.render()">
+              <option value="sum">sum</option>
+              <option value="average">average</option>
+              <option value="min">min</option>
+              <option value="max">max</option>
+            </select>
+          </li>
+
+          <li class="tight-form-item">
+            extent (low, high)
+          </li>
+          <li>
+            <input type="number" ng-model="override.extent.low" class="input-mini tight-form-input" ng-blur="ctrl.render()" >
+          </li>
+          <li class="tight-form-item">
+            ,
+          </li>
+          <li>
+            <input type="number" ng-model="override.extent.high" class="input-mini tight-form-input" ng-blur="ctrl.render()" >
+          </li>
+
+          <li class="tight-form-item">
+            format
+          </li>
+          <li class="dropdown" style="width: 266px;"
+              ng-model="override.format"
+              dropdown-typeahead="ctrl.unitFormats"
+              dropdown-typeahead-on-select="ctrl.setUnitFormat(override, $subItem)">
+          </li>
+
+          <li class="tight-form-item">
+            height
+          </li>
+          <li>
+            <input type="number" ng-model="override.height" min="30" class="input-mini tight-form-input" ng-blur="ctrl.render()" >
+          </li>
+
+          <li class="tight-form-item">
+            bands
+          </li>
+          <li>
+            <input type="number" ng-model="override.bands" min="1" max="10" ng-change="ctrl.bandsChange(override)" class="input-mini tight-form-input" >
+          </li>
+
+          <li class="tight-form-item">
+            -
+          </li>
+          <li class="tight-form-item">
+            <spectrum-picker ng-repeat="color in override.colors.negative" ng-model="color.rgb" ng-change="ctrl.render()"></spectrum-picker>
+          </li>
+          <li class="tight-form-item">
+            +
+          </li>
+          <li class="tight-form-item">
+            <spectrum-picker ng-repeat="color in override.colors.positive" ng-model="color.rgb" ng-change="ctrl.render()"></spectrum-picker>
+          </li>
+          <li class="tight-form-item">
+            <div class="dropdown">
+              <button class="btn btn-small dropdown-toggle" type="button" data-toggle="dropdown">Color Sets
+                <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li ng-repeat="defaultColor in ctrl.defaultBands"><a ng-click="ctrl.setBandsWith(override, defaultColor)">
+                  -
+                  <div class="sp-replacer sp-light" ng-repeat="defaultColorEntry in defaultColor.negative">
+                    <div class="sp-preview">
+                      <div class="sp-preview-inner" style="background-color: {{defaultColorEntry.rgb}};"></div>
+                    </div>
+                    <div class="sp-dd">▼</div>
+                  </div>
+                  +
+                  <div class="sp-replacer sp-light" ng-repeat="defaultColorEntry in defaultColor.positive">
+                    <div class="sp-preview">
+                      <div class="sp-preview-inner" style="background-color: {{defaultColorEntry.rgb}};"></div>
+                    </div>
+                    <div class="sp-dd">▼</div>
+                  </div>
+                </a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-inverse" style="margin-top: 20px" ng-click="ctrl.addSeriesOverride()">
+      Add series specific option
+    </button>
+  </div>
 </div>

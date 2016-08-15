@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import $ from 'jquery';
+import kbn from 'app/core/utils/kbn';
 import 'jquery.flot';
 import 'jquery.flot.pie';
 import cubism from './cubism/index';
@@ -33,12 +33,7 @@ export default function link(scope, elem, attrs, ctrl) {
       .getBoundingClientRect()
       .width);
     var step = Math.floor((latest - earliest) / (size));
-    var seriesStep = Math.floor((latest - earliest) / (seriesLength - 1));
     var serverDelay = Date.now() - latest;
-    // console.log(earliest + ":" + new Date(earliest));
-    // console.log(latest + ":" + new Date(latest));
-    // console.log(seriesLength);
-    // console.log(step);
 
     var cubismTimestamps = [];
     for (var ts = earliest; ts <= latest; ts = ts + step) {
@@ -55,7 +50,6 @@ export default function link(scope, elem, attrs, ctrl) {
       .step(step)
       .size(size)
       .stop();
-
 
     data = ctrl.data;
     panel = ctrl.panel;
@@ -104,10 +98,6 @@ export default function link(scope, elem, attrs, ctrl) {
         .map(function (series, seriesIndex) {
           return convertDataToCubism(series, seriesIndex, cubismTimestamps);
         });
-      console.log(cubismData);
-      // var primary = Data[4];
-      // var secondary = primary.shift(-30 * 60 * 1000); //why is this metric identical to the primary metric?
-      // Data[5] = secondary;
 
       d3.select(cubismContainer)
         .selectAll(".horizon")
@@ -115,13 +105,30 @@ export default function link(scope, elem, attrs, ctrl) {
         .enter()
         .insert("div", ".bottom")
         .attr("class", "horizon")
-        .call(context.horizon()
-          .extent([-10, 10]))
+        .call(
+          function () {
+            var d = arguments[0][0][0].__data__;
+            var extent = null;
+            console.log(d.override);
+            if (d.override.extent.low != null && d.override.extent.high != null && d.override.extent.low != undefined && d.override.extent.high != undefined) {
+              extent = [d.override.extent.low, d.override.extent.high];
+            }
+            var fn = context.horizon()
+              .colors(d.override.colors.negative.concat(d.override.colors.positive)
+                .map(function (c) {
+                  return c.rgb;
+                }))
+              .height(d.override.height)
+              .format(kbn.valueFormats[d.override.format])
+              .extent(extent);
+            fn.apply(this, arguments);
+          }
+        )
     }
   }
 
   function convertDataToCubism(series, seriesIndex, timestamps) {
-    return context.metric(function(start, stop, step, callback) {
+    var metric = context.metric(function(start, stop, step, callback) {
       var dataPoints = series.datapoints;
       var values = [];
       if (timestamps.length == dataPoints.length) {
@@ -171,6 +178,8 @@ export default function link(scope, elem, attrs, ctrl) {
       }
       callback(null, values)
     }, series.target);
+    metric.override = ctrl.getMatchingSeriesOverride(series);
+    return metric;
   }
 
   function sumValues(values) {
@@ -204,7 +213,6 @@ export default function link(scope, elem, attrs, ctrl) {
 
       return true;
     } catch (e) { // IE throws errors sometimes
-      console.log(e);
       return false;
     }
   }

@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie', './cubism/index'], function (_export, _context) {
+System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie', './cubism/index'], function (_export, _context) {
   "use strict";
 
-  var _, $, cubism;
+  var _, kbn, cubism;
 
   function link(scope, elem, attrs, ctrl) {
     var data, panel, context;
@@ -31,12 +31,7 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie', './cubism
       var span = latest - earliest;
       var size = Math.floor(d3.select(cubismContainer).node().getBoundingClientRect().width);
       var step = Math.floor((latest - earliest) / size);
-      var seriesStep = Math.floor((latest - earliest) / (seriesLength - 1));
       var serverDelay = Date.now() - latest;
-      // console.log(earliest + ":" + new Date(earliest));
-      // console.log(latest + ":" + new Date(latest));
-      // console.log(seriesLength);
-      // console.log(step);
 
       var cubismTimestamps = [];
       for (var ts = earliest; ts <= latest; ts = ts + step) {
@@ -86,17 +81,24 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie', './cubism
         var cubismData = data.map(function (series, seriesIndex) {
           return convertDataToCubism(series, seriesIndex, cubismTimestamps);
         });
-        console.log(cubismData);
-        // var primary = Data[4];
-        // var secondary = primary.shift(-30 * 60 * 1000); //why is this metric identical to the primary metric?
-        // Data[5] = secondary;
 
-        d3.select(cubismContainer).selectAll(".horizon").data(cubismData).enter().insert("div", ".bottom").attr("class", "horizon").call(context.horizon().extent([-10, 10]));
+        d3.select(cubismContainer).selectAll(".horizon").data(cubismData).enter().insert("div", ".bottom").attr("class", "horizon").call(function () {
+          var d = arguments[0][0][0].__data__;
+          var extent = null;
+          console.log(d.override);
+          if (d.override.extent.low != null && d.override.extent.high != null && d.override.extent.low != undefined && d.override.extent.high != undefined) {
+            extent = [d.override.extent.low, d.override.extent.high];
+          }
+          var fn = context.horizon().colors(d.override.colors.negative.concat(d.override.colors.positive).map(function (c) {
+            return c.rgb;
+          })).height(d.override.height).format(kbn.valueFormats[d.override.format]).extent(extent);
+          fn.apply(this, arguments);
+        });
       }
     }
 
     function convertDataToCubism(series, seriesIndex, timestamps) {
-      return context.metric(function (start, stop, step, callback) {
+      var metric = context.metric(function (start, stop, step, callback) {
         var dataPoints = series.datapoints;
         var values = [];
         if (timestamps.length == dataPoints.length) {
@@ -135,6 +137,8 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie', './cubism
         }
         callback(null, values);
       }, series.target);
+      metric.override = ctrl.getMatchingSeriesOverride(series);
+      return metric;
     }
 
     function sumValues(values) {
@@ -177,7 +181,6 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie', './cubism
         return true;
       } catch (e) {
         // IE throws errors sometimes
-        console.log(e);
         return false;
       }
     }
@@ -192,8 +195,8 @@ System.register(['lodash', 'jquery', 'jquery.flot', 'jquery.flot.pie', './cubism
   return {
     setters: [function (_lodash) {
       _ = _lodash.default;
-    }, function (_jquery) {
-      $ = _jquery.default;
+    }, function (_appCoreUtilsKbn) {
+      kbn = _appCoreUtilsKbn.default;
     }, function (_jqueryFlot) {}, function (_jqueryFlotPie) {}, function (_cubismIndex) {
       cubism = _cubismIndex.default;
     }],
