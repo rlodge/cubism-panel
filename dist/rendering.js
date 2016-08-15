@@ -6,7 +6,7 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
   var _, kbn, cubism;
 
   function link(scope, elem, attrs, ctrl) {
-    var data, panel, context;
+    var data, panel, context, cubismHeight;
     var anHour = 60 * 60 * 1000;
     var aDay = 24 * anHour;
     var aWeek = 7 * aDay;
@@ -48,6 +48,18 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
       data = ctrl.data;
       panel = ctrl.panel;
 
+      var cubismData = data.map(function (series, seriesIndex) {
+        return convertDataToCubism(series, seriesIndex, cubismTimestamps);
+      });
+
+      cubismHeight = 0;
+
+      cubismData.forEach(function (d) {
+        cubismHeight = cubismHeight + d.override.height;
+      });
+
+      cubismHeight = cubismHeight + 60;
+
       if (setElementHeight()) {
         d3.select(cubismContainer).selectAll(".axis").data(["top", "bottom"]).enter().append("div").attr("class", function (d) {
           return d + " axis";
@@ -77,10 +89,6 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
         });
 
         d3.select(cubismContainer).append("div").attr("class", "rule").call(context.rule());
-
-        var cubismData = data.map(function (series, seriesIndex) {
-          return convertDataToCubism(series, seriesIndex, cubismTimestamps);
-        });
 
         d3.select(cubismContainer).call(function (div) {
           function fn(d, i) {
@@ -182,7 +190,10 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
         height -= 5; // padding
         height -= panel.title ? 24 : 9; // subtract panel title bar
 
+        height = Math.max(height, cubismHeight);
+
         cubismContainer.style.height = height + 'px';
+        cubismContainer.style.minHeight = height + 'px';
 
         return true;
       } catch (e) {

@@ -5,7 +5,7 @@ import 'jquery.flot.pie';
 import cubism from './cubism/index';
 
 export default function link(scope, elem, attrs, ctrl) {
-  var data, panel, context;
+  var data, panel, context, cubismHeight;
   const anHour = 60 * 60 * 1000;
   const aDay = 24 * anHour;
   const aWeek = 7 * aDay;
@@ -54,6 +54,20 @@ export default function link(scope, elem, attrs, ctrl) {
     data = ctrl.data;
     panel = ctrl.panel;
 
+    var cubismData = data
+      .map(function (series, seriesIndex) {
+        return convertDataToCubism(series, seriesIndex, cubismTimestamps);
+      });
+
+    cubismHeight = 0;
+
+    cubismData
+      .forEach(function (d) {
+        cubismHeight = cubismHeight + d.override.height;
+      });
+
+    cubismHeight = cubismHeight + 60;
+
     if (setElementHeight()) {
       d3.select(cubismContainer)
         .selectAll(".axis")
@@ -93,11 +107,6 @@ export default function link(scope, elem, attrs, ctrl) {
         .append("div")
         .attr("class", "rule")
         .call(context.rule());
-
-      var cubismData = data
-        .map(function (series, seriesIndex) {
-          return convertDataToCubism(series, seriesIndex, cubismTimestamps);
-        });
 
       d3.select(cubismContainer)
         .call(
@@ -221,7 +230,10 @@ export default function link(scope, elem, attrs, ctrl) {
       height -= 5; // padding
       height -= panel.title ? 24 : 9; // subtract panel title bar
 
+      height = Math.max(height, cubismHeight);
+
       cubismContainer.style.height = height + 'px';
+      cubismContainer.style.minHeight = height + 'px';
 
       return true;
     } catch (e) { // IE throws errors sometimes
