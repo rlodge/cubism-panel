@@ -18,7 +18,7 @@
       {"name": "Project site", "url": "http://github.com/rlodge/cubism-panel"}
     ],
     "screenshots": [
-      {"name": "Donut!", "path": "src/img/chart_example.png"}
+      {"name": "Sample", "path": "src/img/chart_example.png"}
     ],
     "version": "1.0.0",
     "updated": "2016-08-11"
