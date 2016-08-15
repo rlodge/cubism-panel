@@ -82,17 +82,23 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
           return convertDataToCubism(series, seriesIndex, cubismTimestamps);
         });
 
-        d3.select(cubismContainer).selectAll(".horizon").data(cubismData).enter().insert("div", ".bottom").attr("class", "horizon").call(function () {
-          var d = arguments[0][0][0].__data__;
-          var extent = null;
-          console.log(d.override);
-          if (d.override.extent.low != null && d.override.extent.high != null && d.override.extent.low != undefined && d.override.extent.high != undefined) {
-            extent = [d.override.extent.low, d.override.extent.high];
+        d3.select(cubismContainer).call(function (div) {
+          function fn(d, i) {
+            var thisHorizon = this;
+            var extent = null;
+            if (d.override.extent.low != null && d.override.extent.high != null && d.override.extent.low != undefined && d.override.extent.high != undefined) {
+              extent = [d.override.extent.low, d.override.extent.high];
+            }
+            d3.select(thisHorizon).call(context.horizon().colors(d.override.colors.negative.concat(d.override.colors.positive).map(function (c) {
+              return c.rgb;
+            })).height(d.override.height).format(kbn.valueFormats[d.override.format]).extent(extent));
           }
-          var fn = context.horizon().colors(d.override.colors.negative.concat(d.override.colors.positive).map(function (c) {
-            return c.rgb;
-          })).height(d.override.height).format(kbn.valueFormats[d.override.format]).extent(extent);
-          fn.apply(this, arguments);
+
+          var allHorizons = div.selectAll('.horizon').data(cubismData);
+
+          allHorizons.each(fn);
+
+          allHorizons.enter().insert("div", ".bottom").attr("class", "horizon").each(fn);
         });
       }
     }
