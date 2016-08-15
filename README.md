@@ -1,23 +1,14 @@
-Use the new grafana-cli tool to install piechart-panel from the commandline:
-
-```
-grafana-cli plugins install grafana-piechart-panel
-```
-
-The plugin will be installed into your grafana plugins directory; the default is /var/lib/grafana/plugins if you installed the grafana package.
-
-More instructions on the cli tool can be found [here](http://docs.grafana.org/v3.0/plugins/installation/).
-
 You need the lastest grafana build for Grafana 3.0 to enable plugin support. You can get it here : http://grafana.org/download/builds.html
 
-## Alternative installation method
+## Installation method
 
 It is also possible to clone this repo directly into your plugins directory.
 
 Afterwards restart grafana-server and the plugin should be automatically detected and used.
 
 ```
-git clone https://github.com/grafana/piechart-panel.git
+cd PLUGINS_DIR
+git clone https://github.com/rlodge/cubism-panel.git
 sudo service grafana-server restart
 ```
 
@@ -27,8 +18,8 @@ sudo service grafana-server restart
 If the plugin is cloned to a directory that is not the default plugins directory then you need to edit your grafana.ini config file (Default location is at /etc/grafana/grafana.ini) and add this:
 
 ```ini
-[plugin.piechart]
-path = /home/your/clone/dir/piechart-panel
+[plugin.cubism]
+path = /home/your/clone/dir/cubism-panel
 ```
 
 Note that if you clone it into the grafana plugins directory you do not need to add the above config option. That is only
@@ -37,10 +28,6 @@ needs read access to the directory.
 
 # Changelog
 
-## 1.0.2
+## 1.0.0
 
-* Add piechart piece divider setting
-* Remove Unused code
-* Adds fontsize option for labels on graph
-* Only show the displaied piechart value in legend
-* Add possibility to pick stat to use for piechart
+* Seems to be working
