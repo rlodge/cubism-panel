@@ -97,7 +97,7 @@ export class CubismChartCtrl extends MetricsPanelCtrl {
   defaultSeriesOverride() {
     return {
       alias: "",
-      summaryType: "sum",
+      summaryType: "average",
       extent: {
         low: null,
         high: null
@@ -114,7 +114,6 @@ export class CubismChartCtrl extends MetricsPanelCtrl {
       this.adjustColorBands("-", override.bands, override.colors.negative);
       this.adjustColorBands("+", override.bands, override.colors.positive);
     }
-    console.log(override.colors.positive);
     this.render();
   }
 

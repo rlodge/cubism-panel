@@ -13,7 +13,7 @@ export default function link(scope, elem, attrs, ctrl) {
 
   var cubismContainer = elem.find('.cubism-panel').get(0);
 
-  ctrl.events.on('render', function() {
+  ctrl.events.on('render', function () {
     render();
     ctrl.renderingCompleted();
   });
@@ -41,7 +41,7 @@ export default function link(scope, elem, attrs, ctrl) {
     }
 
     /*
-    First we need the server delay to be at the right place (now - latest)
+     First we need the server delay to be at the right place (now - latest)
      */
 
     cubismContainer.innerHTML = "";
@@ -74,10 +74,10 @@ export default function link(scope, elem, attrs, ctrl) {
         .data(["top", "bottom"])
         .enter()
         .append("div")
-        .attr("class", function(d) {
+        .attr("class", function (d) {
           return d + " axis"
         })
-        .each(function(d) {
+        .each(function (d) {
           var scale = d3.time.hour;
           var count = 6;
           if (span < 2 * anHour) {
@@ -117,6 +117,7 @@ export default function link(scope, elem, attrs, ctrl) {
               if (d.override.extent.low != null && d.override.extent.high != null && d.override.extent.low != undefined && d.override.extent.high != undefined) {
                 extent = [d.override.extent.low, d.override.extent.high];
               }
+              var formatFn = kbn.valueFormats[d.override.format];
               d3.select(thisHorizon)
                 .call(
                   context.horizon()
@@ -125,7 +126,13 @@ export default function link(scope, elem, attrs, ctrl) {
                         return c.rgb;
                       }))
                     .height(d.override.height)
-                    .format(kbn.valueFormats[d.override.format])
+                    .format(function (value) {
+                      if (isNaN(value) || value == null || value == undefined) {
+                        return "";
+                      } else {
+                        return formatFn(value);
+                      }
+                    })
                     .extent(extent)
                 );
             }
@@ -149,7 +156,8 @@ export default function link(scope, elem, attrs, ctrl) {
   }
 
   function convertDataToCubism(series, seriesIndex, timestamps) {
-    var metric = context.metric(function(start, stop, step, callback) {
+    var override = ctrl.getMatchingSeriesOverride(series);
+    var metric = context.metric(function (start, stop, step, callback) {
       var dataPoints = series.datapoints;
       var values = [];
       if (timestamps.length == dataPoints.length) {
@@ -192,32 +200,48 @@ export default function link(scope, elem, attrs, ctrl) {
                 .map(function (point) {
                   return point[0];
                 });
-              return averageValues(values)
+              if (override.summaryType == "sum") {
+                return sumValues(values)
+              } else if (override.summaryType == "min") {
+                return minValue(values)
+              } else if (override.summaryType == "max") {
+                return maxValue(values)
+              } else {
+                return averageValues(values)
+              }
             }
           )
           .value();
       }
       callback(null, values)
     }, series.target);
-    metric.override = ctrl.getMatchingSeriesOverride(series);
+    metric.override = override;
     return metric;
   }
 
   function sumValues(values) {
-    return values.reduce(function(a, b) { return a + b; });
+    return values.reduce(function (a, b) {
+      return a + b;
+    });
   }
 
   function averageValues(values) {
-    var sum = values.reduce(function(a, b) { return a + b; });
+    var sum = values.reduce(function (a, b) {
+      return a + b;
+    });
     return sum / values.length;
   }
 
   function maxValue(values) {
-    return values.reduce(function(a, b) { return Math.max(a, b); })
+    return values.reduce(function (a, b) {
+      return Math.max(a, b);
+    })
   }
 
   function minValue(values) {
-    return values.reduce(function(a, b) { return Math.min(a, b); })
+    return values.reduce(function (a, b) {
+      return Math.min(a, b);
+    })
   }
 
   function setElementHeight() {

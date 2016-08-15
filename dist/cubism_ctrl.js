@@ -168,7 +168,7 @@ System.register(['app/plugins/sdk', 'lodash', 'app/core/utils/kbn', './rendering
           value: function defaultSeriesOverride() {
             return {
               alias: "",
-              summaryType: "sum",
+              summaryType: "average",
               extent: {
                 low: null,
                 high: null
@@ -186,7 +186,6 @@ System.register(['app/plugins/sdk', 'lodash', 'app/core/utils/kbn', './rendering
               this.adjustColorBands("-", override.bands, override.colors.negative);
               this.adjustColorBands("+", override.bands, override.colors.positive);
             }
-            console.log(override.colors.positive);
             this.render();
           }
         }, {

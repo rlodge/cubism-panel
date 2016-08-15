@@ -39,7 +39,7 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
       }
 
       /*
-      First we need the server delay to be at the right place (now - latest)
+       First we need the server delay to be at the right place (now - latest)
        */
 
       cubismContainer.innerHTML = "";
@@ -97,9 +97,16 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
             if (d.override.extent.low != null && d.override.extent.high != null && d.override.extent.low != undefined && d.override.extent.high != undefined) {
               extent = [d.override.extent.low, d.override.extent.high];
             }
+            var formatFn = kbn.valueFormats[d.override.format];
             d3.select(thisHorizon).call(context.horizon().colors(d.override.colors.negative.concat(d.override.colors.positive).map(function (c) {
               return c.rgb;
-            })).height(d.override.height).format(kbn.valueFormats[d.override.format]).extent(extent));
+            })).height(d.override.height).format(function (value) {
+              if (isNaN(value) || value == null || value == undefined) {
+                return "";
+              } else {
+                return formatFn(value);
+              }
+            }).extent(extent));
           }
 
           var allHorizons = div.selectAll('.horizon').data(cubismData);
@@ -112,6 +119,7 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
     }
 
     function convertDataToCubism(series, seriesIndex, timestamps) {
+      var override = ctrl.getMatchingSeriesOverride(series);
       var metric = context.metric(function (start, stop, step, callback) {
         var dataPoints = series.datapoints;
         var values = [];
@@ -146,12 +154,20 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
             }).map(function (point) {
               return point[0];
             });
-            return averageValues(values);
+            if (override.summaryType == "sum") {
+              return sumValues(values);
+            } else if (override.summaryType == "min") {
+              return minValue(values);
+            } else if (override.summaryType == "max") {
+              return maxValue(values);
+            } else {
+              return averageValues(values);
+            }
           }).value();
         }
         callback(null, values);
       }, series.target);
-      metric.override = ctrl.getMatchingSeriesOverride(series);
+      metric.override = override;
       return metric;
     }
 
