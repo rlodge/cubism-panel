@@ -11,27 +11,27 @@ AXIS
 
 .axis text {
   -webkit-transition: fill-opacity 250ms linear;
-  color: #D8D9DA;
+  color: #7B7B7B;
   fill: currentColor; }
 
 .axis path {
   display: none; }
 
 .axis line {
-  stroke: #D8D9DA;
+  stroke: #7B7B7B;
   shape-rendering: crispEdges; }
 
 /*-----------------------------------------------------------------------------
 HORIZON
 -----------------------------------------------------------------------------*/
 .horizon {
-  border-bottom: solid 1px #D8D9DA;
+  border-bottom: solid 1px #7B7B7B;
   overflow: hidden;
   position: relative; }
 
 .horizon {
-  border-top: solid 1px #D8D9DA;
-  border-bottom: solid 1px #D8D9DA; }
+  border-top: solid 1px #7B7B7B;
+  border-bottom: solid 1px #7B7B7B; }
 
 .horizon + .horizon {
   border-top: none; }

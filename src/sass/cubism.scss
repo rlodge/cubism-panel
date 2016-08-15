@@ -13,7 +13,7 @@ AXIS
 
 .axis text {
 	-webkit-transition: fill-opacity 250ms linear;
-	color: $text-color;
+	color: $text-color-weak;
 	fill: currentColor;
 
 }
@@ -23,7 +23,7 @@ AXIS
 }
 
 .axis line {
-	stroke: $body-color;
+	stroke: $text-color-weak;
 	shape-rendering: crispEdges
 }
 
@@ -31,14 +31,14 @@ AXIS
 HORIZON
 -----------------------------------------------------------------------------*/
 .horizon {
-	border-bottom: solid 1px $body-color;
+	border-bottom: solid 1px $text-color-weak;
 	overflow: hidden;
 	position: relative
 }
 
 .horizon {
-	border-top: solid 1px $body-color;
-	border-bottom: solid 1px $body-color
+	border-top: solid 1px $text-color-weak;
+	border-bottom: solid 1px $text-color-weak
 }
 
 .horizon + .horizon {
