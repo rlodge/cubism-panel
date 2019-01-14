@@ -72,7 +72,7 @@ System.register(['app/plugins/sdk', 'lodash', 'app/core/utils/kbn', './rendering
         function CubismChartCtrl($scope, $injector, $rootScope) {
           _classCallCheck(this, CubismChartCtrl);
 
-          var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CubismChartCtrl).call(this, $scope, $injector));
+          var _this = _possibleConstructorReturn(this, (CubismChartCtrl.__proto__ || Object.getPrototypeOf(CubismChartCtrl)).call(this, $scope, $injector));
 
           _this.$rootScope = $rootScope;
           _this.data = [];

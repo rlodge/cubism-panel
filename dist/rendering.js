@@ -119,6 +119,7 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
     }
 
     function convertDataToCubism(series, seriesIndex, timestamps) {
+      console.log(series);
       var override = ctrl.getMatchingSeriesOverride(series);
       var metric = context.metric(function (start, stop, step, callback) {
         var dataPoints = series.datapoints;
@@ -174,26 +175,26 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
     function sumValues(values) {
       return values.reduce(function (a, b) {
         return a + b;
-      });
+      }, 0);
     }
 
     function averageValues(values) {
       var sum = values.reduce(function (a, b) {
         return a + b;
-      });
+      }, 0);
       return sum / values.length;
     }
 
     function maxValue(values) {
       return values.reduce(function (a, b) {
         return Math.max(a, b);
-      });
+      }, 0);
     }
 
     function minValue(values) {
       return values.reduce(function (a, b) {
         return Math.min(a, b);
-      });
+      }, 0);
     }
 
     function setElementHeight() {

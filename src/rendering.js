@@ -222,26 +222,26 @@ export default function link(scope, elem, attrs, ctrl) {
   function sumValues(values) {
     return values.reduce(function (a, b) {
       return a + b;
-    });
+    }, 0);
   }
 
   function averageValues(values) {
     var sum = values.reduce(function (a, b) {
       return a + b;
-    });
+    }, 0);
     return sum / values.length;
   }
 
   function maxValue(values) {
     return values.reduce(function (a, b) {
       return Math.max(a, b);
-    })
+    }, 0);
   }
 
   function minValue(values) {
     return values.reduce(function (a, b) {
       return Math.min(a, b);
-    })
+    }, 0);
   }
 
   function setElementHeight() {
