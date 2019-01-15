@@ -1,31 +1,25 @@
 {
-  "_args": [
-    [
-      "cubism@1.6.0",
-      "/Users/rlodge/code/misc/grafana-dev/src/github.com/grafana/grafana/data/plugins/cubism-panel"
-    ]
-  ],
-  "_from": "cubism@1.6.0",
-  "_id": "cubism@1.6.0",
+  "_from": "github:rlodge/cubism#v1.6.0.1-R",
+  "_id": "cubism@1.6.0-R",
   "_inBundle": false,
-  "_integrity": "sha1-pWbhBZSsWav8c7gpve4y2RovA1A=",
+  "_integrity": "",
   "_location": "/cubism",
   "_phantomChildren": {},
   "_requested": {
-    "type": "version",
-    "registry": true,
-    "raw": "cubism@1.6.0",
+    "type": "git",
+    "raw": "cubism@github:rlodge/cubism#v1.6.0.1-R",
     "name": "cubism",
     "escapedName": "cubism",
-    "rawSpec": "1.6.0",
-    "saveSpec": null,
-    "fetchSpec": "1.6.0"
+    "rawSpec": "github:rlodge/cubism#v1.6.0.1-R",
+    "saveSpec": "github:rlodge/cubism#v1.6.0.1-R",
+    "fetchSpec": null,
+    "gitCommittish": "v1.6.0.1-R"
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/cubism/-/cubism-1.6.0.tgz",
-  "_spec": "1.6.0",
+  "_resolved": "github:rlodge/cubism#5a9a5c65c27260c8b581f41f51af8a94c6e3d507",
+  "_spec": "cubism@github:rlodge/cubism#v1.6.0.1-R",
   "_where": "/Users/rlodge/code/misc/grafana-dev/src/github.com/grafana/grafana/data/plugins/cubism-panel",
   "author": {
     "name": "Mike Bostock",
@@ -34,9 +28,11 @@
   "bugs": {
     "url": "https://github.com/square/cubism/issues"
   },
+  "bundleDependencies": false,
   "dependencies": {
     "d3": "3.x"
   },
+  "deprecated": false,
   "description": "A JavaScript library for time series visualization.",
   "devDependencies": {
     "uglify-js": "1.2.5",
@@ -54,5 +50,5 @@
     "type": "git",
     "url": "git+ssh://git@github.com/square/cubism.git"
   },
-  "version": "1.6.0"
+  "version": "1.6.0-R"
 }

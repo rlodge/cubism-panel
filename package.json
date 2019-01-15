@@ -26,7 +26,7 @@
     "babel-plugin-transform-es2015-for-of": "^6.5.0",
     "babel-plugin-transform-es2015-modules-systemjs": "^6.5.0",
     "babel-preset-es2015": "^6.5.0",
-    "cubism": "^1.6.0",
+    "cubism": "rlodge/cubism#v1.6.0.1-R",
     "lodash": "~4.0.0",
     "tinycolor2": "^1.4.1"
   }

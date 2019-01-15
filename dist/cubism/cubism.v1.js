@@ -133,21 +133,6 @@ cubism.context = function() {
     return context;
   };
 
-  d3.select(window).on("keydown.context-" + ++cubism_id, function() {
-    switch (!d3.event.metaKey && d3.event.keyCode) {
-      case 37: // left
-        if (focus == null) focus = size - 1;
-        if (focus > 0) context.focus(--focus);
-        break;
-      case 39: // right
-        if (focus == null) focus = size - 2;
-        if (focus < size - 1) context.focus(++focus);
-        break;
-      default: return;
-    }
-    d3.event.preventDefault();
-  });
-
   return update();
 };
 
