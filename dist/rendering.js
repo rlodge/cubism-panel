@@ -119,7 +119,6 @@ System.register(['lodash', 'app/core/utils/kbn', 'jquery.flot', 'jquery.flot.pie
     }
 
     function convertDataToCubism(series, seriesIndex, timestamps) {
-      console.log(series);
       var override = ctrl.getMatchingSeriesOverride(series);
       var metric = context.metric(function (start, stop, step, callback) {
         var dataPoints = series.datapoints;
